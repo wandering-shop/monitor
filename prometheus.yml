@@ -27,3 +27,9 @@ scrape_configs:
           - "ubuntu-c-2-4gib-nyc3-01.tail9a8e5.ts.net:9102"
           - "ubuntu-c-2-4gib-nyc3-02.tail9a8e5.ts.net:9102"
           - "wandering-shop-nyc1.tail9a8e5.ts.net:9102"
+
+  - job_name: "nginx"
+
+    static_configs:
+      - targets:
+          - "wandering-shop-nyc1.tail9a8e5.ts.net:9113"
