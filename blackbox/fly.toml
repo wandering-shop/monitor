@@ -1,0 +1,46 @@
+# fly.toml file generated for shop-probe on 2023-02-19T10:41:30-08:00
+
+app = "shop-probe"
+kill_signal = "SIGINT"
+kill_timeout = 5
+processes = []
+
+[env]
+
+[mounts]
+source="shop_probe_ts"
+destination="/data"
+
+[experimental]
+  allowed_public_ports = []
+  auto_rollback = true
+
+[[services]]
+  internal_port = 9115
+  processes = ["app"]
+  protocol = "tcp"
+  script_checks = []
+  [services.concurrency]
+    hard_limit = 25
+    soft_limit = 20
+    type = "connections"
+
+  [[services.http_checks]]
+    grace_period = "5s"
+    interval = 10000
+    method = "get"
+    path = "/metrics"
+    protocol = "http"
+    restart_limit = 0
+    timeout = 2000
+
+  # [[services.ports]]
+  #   force_https = false
+  #   handlers = ["http"]
+  #   port = 9115
+
+  [[services.tcp_checks]]
+    grace_period = "1s"
+    interval = "15s"
+    restart_limit = 0
+    timeout = "2s"
