@@ -3,13 +3,66 @@ on:
   push:
     branches:
       - main
+      - ci-*
 env:
   FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
 jobs:
-  deploy:
-    name: Deploy app
+  init:
+    name: Prepare the monitoring build
     runs-on: ubuntu-latest
+    outputs:
+      changed_apps: ${{ steps.changed_apps.outputs.apps }}
+      changed: ${{ steps.changed_apps.outputs.changed }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Get changed files
+        id: changed_files
+        # pinning out of paranoia, this is the modern-node fork of jitterbit/get-changed-files
+        uses: masesgroup/retrieve-changed-files@076a92699259d81d1c607bd91f0e1e9d45fd3151
+
+      - name: identify changed apps
+        id: changed_apps
+        run: |
+          declare -a changed_apps
+
+          for app_file in $(find . -name fly.toml); do
+            app_dir=$(dirname "$app_file")
+            app_name=$(basename "$app_dir")
+
+            if [[ "${{steps.changed_files.outputs.all}}" =~ $app_name ]]; then
+              changed_apps+=("\"${app_name}\",")
+            fi
+          done
+
+          # this reverses the list, strips off the trailing comma, and re-sets it.
+          # ... what a wild trick. Shells, amirite?
+          changed=$(echo ${changed_apps[@]} | rev | cut -c 2- | rev)
+
+          if [[ -n ${changed} ]]; then
+            echo "Changed apps: $changed";
+            echo "changed=true" >> $GITHUB_OUTPUT
+            echo "apps=[$changed]" >> $GITHUB_OUTPUT
+          else
+            echo "No apps had changes"
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
+
+  deploy:
+    needs: init
+    runs-on: ubuntu-latest
+    if: needs.init.outputs.changed == 'true'
+    name: Deploy ${{ matrix.app_name }} app
+    strategy:
+      matrix:
+        app_name: ${{ fromJson(needs.init.outputs.changed_apps) }}
     steps:
       - uses: actions/checkout@v3
       - uses: superfly/flyctl-actions/setup-flyctl@master
-      - run: flyctl deploy --remote-only
+      - name: debug CI
+        run: pwd
+        working-directory: ./${{ matrix.app_name }}
+        if: github.ref != 'refs/heads/main'
+      - name: Fly!
+        run: flyctl deploy --remote-only
+        working-directory: ./${{ matrix.app_name }}
+        if: github.ref == 'refs/heads/main'
