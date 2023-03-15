@@ -1,4 +1,6 @@
 FROM alpine:latest as builder
+ARG TAILSCALE_VERSION=1.38.1
+
 WORKDIR /app
 COPY . ./
 # This is where one could build the application code as well.
@@ -6,7 +8,7 @@ COPY . ./
 
 FROM alpine:latest as tailscale
 WORKDIR /app
-ENV TSFILE=tailscale_1.36.2_amd64.tgz
+ENV TSFILE=tailscale_${TAILSCALE_VERSION}_amd64.tgz
 RUN wget https://pkgs.tailscale.com/stable/${TSFILE} && \
   tar xzf ${TSFILE} --strip-components=1
 
