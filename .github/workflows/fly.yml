@@ -57,7 +57,9 @@ jobs:
         app_name: ${{ fromJson(needs.init.outputs.changed_apps) }}
     steps:
       - uses: actions/checkout@v3
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
       - uses: superfly/flyctl-actions/setup-flyctl@master
       - name: Fly!
-        run: flyctl deploy --remote-only
+        run: flyctl deploy --local-only
         working-directory: ./${{ matrix.app_name }}
