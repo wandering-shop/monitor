@@ -24,6 +24,7 @@ jobs:
         id: changed_apps
         run: |
           declare -a changed_apps
+          declare -a all_apps
 
           for app_file in $(find . -name fly.toml); do
             app_dir=$(dirname "$app_file")
@@ -32,19 +33,23 @@ jobs:
             if [[ "${{steps.changed_files.outputs.all}}" =~ $app_name ]]; then
               changed_apps+=("\"${app_name}\",")
             fi
+
+            all_apps+=("\"${app_name}\",")
           done
 
           # this reverses the list, strips off the trailing comma, and re-sets it.
           # ... what a wild trick. Shells, amirite?
           changed=$(echo ${changed_apps[@]} | rev | cut -c 2- | rev)
+          all=$(echo ${all_apps[@]} | rev | cut -c 2- | rev)
 
           if [[ -n ${changed} ]]; then
             echo "Changed apps: $changed";
             echo "changed=true" >> $GITHUB_OUTPUT
             echo "apps=[$changed]" >> $GITHUB_OUTPUT
           else
-            echo "No apps had changes"
-            echo "changed=false" >> $GITHUB_OUTPUT
+            echo "No apps had changes. Assuming we should redeploy all of them."
+            echo "changed=true" >> $GITHUB_OUTPUT
+            echo "apps=[$all]" >> $GITHUB_OUTPUT
           fi
 
   deploy:
