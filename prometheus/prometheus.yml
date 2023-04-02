@@ -68,4 +68,4 @@ scrape_configs:
       - source_labels: [__param_target]
         target_label: instance
       - target_label: __address__
-        replacement: 100.86.230.222:9115 # shop-probe
+        replacement: 100.64.199.163:9115 # shop-probe
