@@ -62,6 +62,7 @@ scrape_configs:
     static_configs:
       - targets:
           - "https://wandering.shop:443/about"
+          - "https://wandering.shop:443/public/local"
     relabel_configs:
       - source_labels: [__address__]
         target_label: __param_target
