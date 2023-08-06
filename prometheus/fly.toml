@@ -1,50 +1,49 @@
-# fly.toml file generated for shop-watcher on 2023-01-10T17:43:32-08:00
+# fly.toml app configuration file generated for shop-watcher on 2023-08-06T09:46:51-07:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
 
 app = "shop-watcher"
+primary_region = "sea"
 kill_signal = "SIGINT"
-kill_timeout = 5
-processes = []
-
-[env]
-
-[mounts]
-source="shop_watcher_ts"
-destination="/data"
+kill_timeout = "5s"
 
 [experimental]
-  allowed_public_ports = []
   auto_rollback = true
 
+[[mounts]]
+  source = "shop_watcher_ts"
+  destination = "/data"
+  processes = ["app"]
+
 [[services]]
+  protocol = "tcp"
   internal_port = 9090
   processes = ["app"]
-  protocol = "tcp"
-  script_checks = []
+
+  [[services.ports]]
+    port = 80
+    handlers = ["http"]
+    force_https = true
+
+  [[services.ports]]
+    port = 443
+    handlers = ["tls", "http"]
   [services.concurrency]
+    type = "connections"
     hard_limit = 25
     soft_limit = 20
-    type = "connections"
-
-  [[services.ports]]
-    force_https = true
-    handlers = ["http"]
-    port = 80
-
-  [[services.ports]]
-    handlers = ["tls", "http"]
-    port = 443
 
   [[services.tcp_checks]]
-    grace_period = "1s"
     interval = "15s"
-    restart_limit = 0
     timeout = "2s"
+    grace_period = "1s"
 
   [[services.http_checks]]
-    interval = 10000
+    interval = "10s"
+    timeout = "2s"
     grace_period = "5s"
     method = "get"
     path = "/metrics"
     protocol = "http"
-    restart_limit = 0
-    timeout = 2000
+    tls_skip_verify = false
