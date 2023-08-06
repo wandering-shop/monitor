@@ -1,46 +1,40 @@
-# fly.toml file generated for shop-probe on 2023-02-19T10:41:30-08:00
+# fly.toml app configuration file generated for shop-probe on 2023-08-06T09:56:18-07:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
 
 app = "shop-probe"
+primary_region = "sea"
 kill_signal = "SIGINT"
-kill_timeout = 5
-processes = []
-
-[env]
-
-[mounts]
-source="shop_probe_ts"
-destination="/data"
+kill_timeout = "5s"
 
 [experimental]
-  allowed_public_ports = []
   auto_rollback = true
 
+[[mounts]]
+  source = "shop_probe_ts"
+  destination = "/data"
+  processes = ["app"]
+
 [[services]]
+  protocol = "tcp"
   internal_port = 9115
   processes = ["app"]
-  protocol = "tcp"
-  script_checks = []
   [services.concurrency]
+    type = "connections"
     hard_limit = 25
     soft_limit = 20
-    type = "connections"
+
+  [[services.tcp_checks]]
+    interval = "15s"
+    timeout = "2s"
+    grace_period = "1s"
 
   [[services.http_checks]]
+    interval = "10s"
+    timeout = "2s"
     grace_period = "5s"
-    interval = 10000
     method = "get"
     path = "/metrics"
     protocol = "http"
-    restart_limit = 0
-    timeout = 2000
-
-  # [[services.ports]]
-  #   force_https = false
-  #   handlers = ["http"]
-  #   port = 9115
-
-  [[services.tcp_checks]]
-    grace_period = "1s"
-    interval = "15s"
-    restart_limit = 0
-    timeout = "2s"
+    tls_skip_verify = false
