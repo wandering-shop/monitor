@@ -38,7 +38,7 @@ scrape_configs:
         replacement: $1:9102
         target_label: __address__
 
-  - job_name: tailscale-node-exporter
+  - job_name: node
     http_sd_configs:
       - url: http://wandering-shop-nyc1.tail9a8e5.ts.net:9242/
     relabel_configs:
