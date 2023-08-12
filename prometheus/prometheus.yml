@@ -23,7 +23,7 @@ scrape_configs:
       - url: http://wandering-shop-nyc1.tail9a8e5.ts.net:9242/
     relabel_configs:
       - source_labels: [__meta_tailscale_device_tag]
-        regex: "tag:(sidekiq|app|web)"
+        regex: "tag:node"
         action: keep
       - source_labels: [__meta_tailscale_device_hostname]
         target_label: tailscale_hostname
@@ -43,7 +43,7 @@ scrape_configs:
       - url: http://wandering-shop-nyc1.tail9a8e5.ts.net:9242/
     relabel_configs:
       - source_labels: [__meta_tailscale_device_tag]
-        regex: "tag:(sidekiq|app|web)"
+        regex: "tag:node"
         action: keep
       - source_labels: [__meta_tailscale_device_hostname]
         target_label: tailscale_hostname
