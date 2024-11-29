@@ -7,7 +7,7 @@ COPY . ./
 
 FROM alpine:latest as tailscale
 WORKDIR /app
-ENV TAILSCALE_VERSION=1.38.3
+ENV TAILSCALE_VERSION=1.76.6
 ENV TSFILE=tailscale_${TAILSCALE_VERSION}_amd64.tgz
 RUN wget https://pkgs.tailscale.com/stable/${TSFILE} && \
   tar xzf ${TSFILE} --strip-components=1
@@ -16,7 +16,7 @@ RUN wget https://pkgs.tailscale.com/stable/${TSFILE} && \
 FROM alpine:latest as blackbox
 WORKDIR /extract
 ENV EXPORTER_BASE=https://github.com/prometheus/blackbox_exporter/releases/download
-ENV EXPORTER_VERSION=0.23.0
+ENV EXPORTER_VERSION=0.25.0
 ENV EXPORTER_SHA=63bd4fde6984db79c95e1502a0ab47da6194d763bff22a04d1f50c4fd8322b84
 ENV EXPORTER_RELEASE=${EXPORTER_BASE}/v${EXPORTER_VERSION}/blackbox_exporter-${EXPORTER_VERSION}.linux-amd64.tar.gz
 ENV TARFILE=blackbox-exporter.tar.gz
