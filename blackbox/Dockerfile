@@ -1,11 +1,11 @@
-FROM alpine:latest as builder
+FROM alpine:latest AS builder
 
 WORKDIR /app
 COPY . ./
 # This is where one could build the application code as well.
 
 
-FROM alpine:latest as tailscale
+FROM alpine:latest AS tailscale
 WORKDIR /app
 ENV TAILSCALE_VERSION=1.76.6
 ENV TSFILE=tailscale_${TAILSCALE_VERSION}_amd64.tgz
@@ -13,11 +13,11 @@ RUN wget https://pkgs.tailscale.com/stable/${TSFILE} && \
   tar xzf ${TSFILE} --strip-components=1
 
 # https://docs.docker.com/develop/develop-images/multistage-build/#use-multi-stage-builds
-FROM alpine:latest as blackbox
+FROM alpine:latest AS blackbox
 WORKDIR /extract
 ENV EXPORTER_BASE=https://github.com/prometheus/blackbox_exporter/releases/download
 ENV EXPORTER_VERSION=0.25.0
-ENV EXPORTER_SHA=63bd4fde6984db79c95e1502a0ab47da6194d763bff22a04d1f50c4fd8322b84
+ENV EXPORTER_SHA=c651ced6405c5e0cd292a400f47ae9b34f431f16c7bb098afbcd38f710144640
 ENV EXPORTER_RELEASE=${EXPORTER_BASE}/v${EXPORTER_VERSION}/blackbox_exporter-${EXPORTER_VERSION}.linux-amd64.tar.gz
 ENV TARFILE=blackbox-exporter.tar.gz
 RUN wget -O ${TARFILE} $EXPORTER_RELEASE
