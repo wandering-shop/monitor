@@ -53,6 +53,22 @@ jobs:
             echo "apps=[$all]" >> $GITHUB_OUTPUT
           fi
 
+  build:
+    needs: init
+    runs-on: ubuntu-latest
+    if: needs.init.outputs.changed == 'true' && github.event_name == 'pull_request'
+    strategy:
+      matrix:
+        app_name: ${{ fromJson(needs.init.outputs.changed_apps) }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+      - name: docker build in ${{ matrix.app_name }}
+        run: |
+          docker build .
+        working-directory: ./${{ matrix.app_name }}
+
   deploy:
     needs: init
     runs-on: ubuntu-latest
