@@ -7,7 +7,7 @@ COPY . ./
 
 FROM alpine:latest AS tailscale
 WORKDIR /app
-ENV TAILSCALE_VERSION=1.76.6
+ENV TAILSCALE_VERSION=1.78.1
 ENV TSFILE=tailscale_${TAILSCALE_VERSION}_amd64.tgz
 RUN wget https://pkgs.tailscale.com/stable/${TSFILE} && \
   tar xzf ${TSFILE} --strip-components=1
