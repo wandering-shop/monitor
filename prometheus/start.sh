@@ -9,7 +9,7 @@ mkdir -p /data/tailscale /data/tsdb
 /app/tailscaled --state=/data/tailscale/tailscaled.state \
     --socket=/var/run/tailscale/tailscaled.sock &
 /app/tailscale up --authkey="$TAILSCALE_AUTHKEY" --hostname=shop-monitor
-/usr/bin/prometheus \
+/bin/prometheus \
     --config.file=/app/prometheus.yml \
     --storage.tsdb.path=/data/tsdb \
     --storage.tsdb.retention.size=2GB
