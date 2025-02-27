@@ -28,4 +28,5 @@ VOLUME /var/cache/tailscale/
 VOLUME /data
 
 # Run on container startup.
+ENTRYPOINT []
 CMD ["/app/start.sh"]
