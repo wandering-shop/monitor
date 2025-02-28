@@ -20,10 +20,9 @@ COPY --from=builder /app/start.sh /app/start.sh
 COPY --from=builder /app/prometheus.yml /etc/prometheus/prometheus.yml
 COPY --from=tailscale /app/tailscaled /app/tailscaled
 COPY --from=tailscale /app/tailscale /app/tailscale
-VOLUME /var/run/tailscale/
-VOLUME /var/cache/tailscale/
-# RUN mkdir -p /var/run/tailscale /var/cache/tailscale
-
+USER root
+RUN mkdir -p /var/run/tailscale /var/cache/tailscale && chown -R nobody:nobody /var/run/tailscale /var/cache/tailscale
+USER nobody
 # mounted data
 VOLUME /data
 
