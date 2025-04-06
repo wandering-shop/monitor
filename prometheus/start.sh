@@ -12,5 +12,4 @@ mkdir -p /data/tailscale /data/tsdb
 /usr/bin/prometheus \
     --config.file=/app/prometheus.yml \
     --storage.tsdb.path=/data/tsdb \
-    --storage.tsdb.retention.size=2GB \
-    --web.enable-otlp-receiver
+    --storage.tsdb.retention.size=2GB
