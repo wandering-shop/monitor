@@ -27,5 +27,4 @@ USER nobody
 VOLUME /data
 
 # Run on container startup.
-ENTRYPOINT []
 CMD ["/app/start.sh"]
